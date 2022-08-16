@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:movieposter/model/view_model_class.dart';
 import 'package:provider/provider.dart';
 
+import '../debounce/debounce.dart';
+
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
 
@@ -11,6 +13,17 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final _textController = TextEditingController();
+  final _debouncer = Debouncer(milliseconds: 500);
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero, () {
+      final viewModel = context.read<PosterViewModel>();
+      viewModel.fetchFosterInfo(_textController.text);
+    });
+    super.initState();
+  }
+
   @override
   void dispose() {
     _textController.dispose();
@@ -26,6 +39,10 @@ class _MainScreenState extends State<MainScreen> {
         child: Column(
           children: [
             TextField(
+              onChanged: (value) {
+                _debouncer
+                    .run(() => viewModel.fetchFosterInfo(_textController.text));
+              },
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: '검색어를 입력하세요',
@@ -52,18 +69,11 @@ class _MainScreenState extends State<MainScreen> {
                   crossAxisSpacing: 10,
                 ),
                 itemBuilder: ((context, index) {
-                  return Expanded(
-                    child: Column(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.network(
-                            'https://image.tmdb.org/t/p/w500${viewModel.infos[index].posterPath}',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Text('제목')
-                      ],
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.network(
+                      'https://image.tmdb.org/t/p/w500${viewModel.infos[index].posterPath}',
+                      fit: BoxFit.cover,
                     ),
                   );
                 }),
