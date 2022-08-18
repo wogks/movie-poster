@@ -8,6 +8,7 @@ void main() {
     ChangeNotifierProvider(
       create: (_) => PosterViewModel(),
       child: const MyApp(),
+      
     ),
   );
 }

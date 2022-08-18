@@ -23,4 +23,26 @@ class PosterApi {
 
     // return results.map((e) => PostersInfo.fromjson(e));
   }
+  Future<List<PostersInfo>> getFirstpage() async {
+    Uri url = Uri.parse(
+        'https://api.themoviedb.org/3/movie/upcoming?api_key=a64533e7ece6c72731da47c9c8bc691f&language=ko-KR&page=1');
+
+    http.Response response = await http.get(url);
+
+    String jsonString = response.body;
+
+    Map<String, dynamic> json = jsonDecode(jsonString);
+
+    Iterable results = json['results'];
+
+    List<PostersInfo> posterResult =
+        results.map((element) => PostersInfo.fromjson(element)).toList();
+
+    return posterResult;
+
+    
+
+    // return results.map((e) => PostersInfo.fromjson(e));
+  }
 }
+

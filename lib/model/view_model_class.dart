@@ -7,15 +7,17 @@ class PosterViewModel extends ChangeNotifier {
 
   List<PostersInfo> infos = [];
 
-  // PostersInfo infos = PostersInfo(
-  //   title: '',
-  //   posterPath: '',
-  //   voteAverage: 0,
-  //   overview: 'overview',
-  // );
+  PosterViewModel() {
+    fetchFirstInfo();
+  }
 
   void fetchFosterInfo(String query) async {
     infos = await _poster.getPoster(query);
+
+    notifyListeners();
+  }
+  void fetchFirstInfo() async {
+    infos = await _poster.getFirstpage();
 
     notifyListeners();
   }
